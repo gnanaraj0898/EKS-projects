@@ -9,6 +9,8 @@ resource "aws_iam_openid_connect_provider" "eks" {
   url = data.aws_eks_cluster.this.identity[0].oidc[0].issuer
   client_id_list = ["sts.amazonaws.com"]
   thumbprint_list = [data.tls_certificate.oidc_thumbprint.certificates[0].sha1_fingerprint]
+  depends_on = [null_resource.wait_for_cluster]
+
 }
 
 # Download official IAM policy JSON at plan/apply time
@@ -18,7 +20,7 @@ data "http" "alb_controller_policy" {
 }
 
 resource "aws_iam_policy" "alb" {
-  name   = "AWSLoadBalancerControllerIAMPolicy"
+  name   = "AWSLoadBalancerControllerIAMPolicy_TF"
   policy = data.http.alb_controller_policy.response_body
 }
 
@@ -86,11 +88,16 @@ resource "helm_release" "alb" {
       vpcId  = aws_vpc.this.id
     })
   ]
-
-  timeout          = 300
+  depends_on = [
+    null_resource.wait_for_cluster,
+    kubernetes_service_account.alb,
+    aws_iam_role_policy_attachment.alb_attach,
+    kubernetes_deployment.game
+  ]
+  timeout          = 600
   force_update     = true
   recreate_pods    = true
   atomic           = true
-  depends_on = [kubernetes_service_account.alb]
+  
 }
 

@@ -9,7 +9,7 @@ resource "kubernetes_namespace" "game" {
 resource "kubernetes_deployment" "game" {
   metadata {
     # YAML: name: deployment-2048, namespace: game-2048
-    name      = "deployment-2048"
+    name      = "deployment-2048-v2"
     namespace = kubernetes_namespace.game.metadata[0].name
     # (Optional) You can add labels here, but YAML doesn't define deployment-level labels.
   }
@@ -47,7 +47,7 @@ resource "kubernetes_deployment" "game" {
     }
   }
 
-  depends_on = [aws_eks_fargate_profile.game_ns]
+  depends_on = [null_resource.wait_for_cluster, aws_eks_fargate_profile.game_ns]
 }
 
 resource "kubernetes_service" "game" {
@@ -76,6 +76,7 @@ resource "kubernetes_service" "game" {
       # node_port not specified in YAML, so let Kubernetes auto-assign.
     }
   }
+  depends_on = [null_resource.wait_for_cluster, aws_eks_fargate_profile.game_ns]
 }
 
 resource "kubernetes_ingress_v1" "game" {
@@ -113,7 +114,6 @@ resource "kubernetes_ingress_v1" "game" {
       }
     }
   }
-
-  depends_on = [helm_release.alb]
+  depends_on = [null_resource.wait_for_cluster, aws_eks_fargate_profile.game_ns, helm_release.alb]
 }
 
