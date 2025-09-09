@@ -92,7 +92,7 @@ resource "helm_release" "alb" {
     null_resource.wait_for_cluster,
     kubernetes_service_account.alb,
     aws_iam_role_policy_attachment.alb_attach,
-    kubernetes_deployment.game
+    
   ]
   timeout          = 600
   force_update     = true
