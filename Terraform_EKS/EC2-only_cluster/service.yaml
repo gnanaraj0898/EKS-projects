@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-2048
+  namespace: game-2048
+  labels:
+    app: app-2048
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: app-2048
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
