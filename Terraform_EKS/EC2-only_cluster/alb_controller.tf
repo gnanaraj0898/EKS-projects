@@ -1,17 +1,17 @@
 # alb_controller.tf (IRSA + Helm chart)
 
 # OIDC provider for IRSA
-data "tls_certificate" "oidc_thumbprint" {
-  url = data.aws_eks_cluster.this.identity[0].oidc[0].issuer
-}
+# data "tls_certificate" "oidc_thumbprint" {
+#   url = data.aws_eks_cluster.this.identity[0].oidc[0].issuer
+# }
 
-resource "aws_iam_openid_connect_provider" "eks" {
-  url = data.aws_eks_cluster.this.identity[0].oidc[0].issuer
-  client_id_list = ["sts.amazonaws.com"]
-  thumbprint_list = [data.tls_certificate.oidc_thumbprint.certificates[0].sha1_fingerprint]
-  depends_on = [null_resource.wait_for_cluster]
+# resource "aws_iam_openid_connect_provider" "eks" {
+#   url = data.aws_eks_cluster.this.identity[0].oidc[0].issuer
+#   client_id_list = ["sts.amazonaws.com"]
+#   thumbprint_list = [data.tls_certificate.oidc_thumbprint.certificates[0].sha1_fingerprint]
+#   depends_on = [null_resource.wait_for_cluster]
 
-}
+# }
 
 # Download official IAM policy JSON at plan/apply time
 # (avoids pasting a huge document here)
@@ -25,10 +25,10 @@ resource "aws_iam_policy" "alb" {
 }
 
 # Trust policy for service account (IRSA)
-locals {
-  oidc_arn  = aws_iam_openid_connect_provider.eks.arn
-  oidc_url  = replace(data.aws_eks_cluster.this.identity[0].oidc[0].issuer, "https://", "")
-}
+# locals {
+#   oidc_arn  = aws_iam_openid_connect_provider.eks.arn
+#   oidc_url  = replace(data.aws_eks_cluster.this.identity[0].oidc[0].issuer, "https://", "")
+# }
 
 resource "aws_iam_role" "alb_sa" {
   name = "AmazonEKSLoadBalancerControllerRole"
