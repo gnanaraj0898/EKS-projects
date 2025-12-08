@@ -27,7 +27,19 @@ So, from inside your debug-pod, localhost:30395 means "try to connect to my own 
 # From inside the debug-pod 
 / # wget http://nginx-pvc-deployment:80
 ----------------------------------------------------------------------
+Name space:
+pod 1- ns1(demo.svc.cluster.local)    pod 2-ns2(default.svc.cluster.local)
+svc1                                  svc2
 
+pod 1 can communicate with pod 2 with ip but not name space
+reason: namespace is a local dns seperator
+Eg:
+if you access ip of pod 2 from pod 1 - it works
+if you access svc1 to access pod 1 from pod 2 it doesnt work 
+if you access svc1.demo.svc.cluster.local it will take you to pod 1
+
+FQDN(fully qualifies domain name)- available in etc/resolve.config
+--------------------------------------------------------------------
 HPA - Horizontal Pod Autoscaling
 API server - ?
 Rollout - ?
