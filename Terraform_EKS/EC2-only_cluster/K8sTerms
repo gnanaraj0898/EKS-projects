@@ -1,0 +1,39 @@
+kubectl expose deployment nginx-pvc-deployment --type=NodePort --port=80
+kubectl expose deployment nginx-pvc-deployment --type=NodePort --port=80
+ is a command used in Kubernetes to create a NodePort service that exposes your nginx-pvc-deployment. 
+This command will:
+1. Look up the deployment named nginx-pvc-deployment.
+2. Use the selector of that deployment to select the pods running your nginx application.
+3. Create a new Kubernetes service of type NodePort.
+4. Configure the service to listen on port 80.
+5. Route traffic from port 80 on the service to the pods matching the deployment's selector. 
+
+###PS C:\Users\Gnana raj\kubernetes-kind\storage> kubectl port-forward service/nginx-pvc-deployment 8080:80
+Error from server (NotFound): services "nginx-pvc-deployment" not found
+PS C:\Users\Gnana raj\kubernetes-kind\storage> kubectl get svc
+NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   18m
+PS C:\Users\Gnana raj\kubernetes-kind\storage> kubectl expose deployment nginx-pvc-deployment --type=NodePort --port=80
+service/nginx-pvc-deployment exposed
+PS C:\Users\Gnana raj\kubernetes-kind\storage> kubectl get svc nginx-pvc-deployment
+NAME                   TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+nginx-pvc-deployment   NodePort   10.96.170.116   <none>        80:30395/TCP   53s###
+
+
+When you run wget http://localhost:30395 from inside the debug-pod, localhost (or 127.0.0.1) refers to the network interface of the debug-pod itself.
+Your Nginx service (nginx-pvc-deployment) is listening on its own Pod's IP address on port 80, and the NodePort service (which has IP 10.96.170.116 and port 80:30395/TCP) provides a way to access that service.
+So, from inside your debug-pod, localhost:30395 means "try to connect to my own Pod on port 30395", which doesn't have Nginx running on it, nor is port 30395 open on the debug pod. That's why you get "Connection refused."
+
+# From inside the debug-pod 
+/ # wget http://nginx-pvc-deployment:80
+----------------------------------------------------------------------
+
+HPA - Horizontal Pod Autoscaling
+API server - ?
+Rollout - ?
+Helm charts - ? Install ingress in helm charts ?
+Stateful set vs deployemts ?
+Gateway api in k8s vs ingress ?
+Service mesh ?
+Secrets
+Datadogs
