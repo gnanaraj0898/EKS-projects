@@ -179,6 +179,12 @@ resource "aws_iam_role_policy_attachment" "node_AmazonEKS_CNI_Policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
 }
 
+# Grant CNI permissions via node role (simple & compatible)
+resource "aws_iam_role_policy_attachment" "node_AmazonEBS_CSI_DriverPolicy" {
+  role       = aws_iam_role.node.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+}
+
 ############################################
 # Managed Node Group on private subnets    #
 ############################################
