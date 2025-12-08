@@ -1,0 +1,101 @@
+
+
+e <your-cluster-name> --region <your-aws-region>  "
+To connect to your Amazon Elastic Kubernetes Service (EKS) cluster using the kubectl command-line tool, you'll need to create or update your kubeconfig file. This file stores the configuration details and credentials needed to authenticate with your EKS cluster
+
+Open ID connect provider URL - allows u to connect with internal and external Identity providers like IAM, Azure AD, Pinniped, etc..Prerequesite:
+AWS CLI 
+EKSCTL  -- for creating clusters
+KUBECTL -- for orchestrating the clusters
+#Create cluster
+Eksctl create cluster --name project1 --region us-east-1 --fargate
+In laptop###
+" aws eks update-kubeconfig --nam
+
+
+	- Integrate IAM service roles with kubernetes service accounts so that the pods communicates with other aws services
+
+Resources shows all your resources like service, deployements, ingresss, storage, etc..
+
+Compute > Fargate profile is associated with default and kube-sys name space, hence you can create nodes only in those 2 namespace, if you wanna use other name spaces then you have to create additional records of fargate profile.
+
+eksctl create fargateprofile \
+    --cluster demo-cluster \
+    --region us-east-1 \
+    --name alb-sample-app \
+    --namespace game-2048
+
+Create a fargate profile instead of following node/pod affinity and anti affinity.
+
+Deployment
+kubectl apply -f https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.5.4/docs/examples/2048/2048_full.yaml
+
+"eksctl utils associate-iam-oidc-provider --cluster <cluster name> --approve"
+Associates your cluster to IAM OIDC --can be done manually as well
+
+Create iam policy for the ALB controller - so that the controller create and manage AWS resources  
+Use github json
+
+Create a service account assigning the IAM Role inside it to control other aws resources
+
+Kubectl edit deploy/aws-load-balancer-controller -n kube-system
+For debugging
+
+Deploy ALB controller using Helm
+
+Now ingress will be having the address of the load balancer created by alb controller
+
+Use address and access the app 
+
+eksctl delete cluster --name demo-cluster --region us-east-1
+-------------------------------------------------------------------------------
+
+CMDs
+https://github.com/iam-veeramalla/aws-devops-zero-to-hero/blob/main/day-22/alb-controller-add-on.md
+
+Eksctl create cluster --name demo-eks --region us-east-1 --fargate
+
+aws eks update-kubeconfig --name demo-eks --region us-east-1
+
+eksctl create fargateprofile --cluster demo-eks --region us-east-1 --name alb-sample-app --namespace game-2048
+
+Check - kubectl get ingress -n game-2048
+
+eksctl utils associate-iam-oidc-provider --cluster demo-eks --approve
+
+curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.11.0/docs/install/iam_policy.json
+
+aws iam create-policy --policy-name AWSLoadBalancerControllerIAMPolicy --policy-document file://iam_policy.json
+
+O/p 
+{
+    "Policy": {
+        "PolicyName": "AWSLoadBalancerControllerIAMPolicy",
+        "PolicyId": "ANPAZQ3DOZHJ7KBQQCHAA",
+        "Arn": "arn:aws:iam::acc_no:policy/AWSLoadBalancerControllerIAMPolicy",
+        "Path": "/",
+        "DefaultVersionId": "v1",
+        "AttachmentCount": 0,
+        "PermissionsBoundaryUsageCount": 0,
+        "IsAttachable": true,
+        "CreateDate": "2025-08-26T09:40:30+00:00",
+        "UpdateDate": "2025-08-26T09:40:30+00:00"
+    }
+}
+
+
+eksctl create iamserviceaccount --cluster=demo-eks --namespace=kube-system --name=aws-load-balancer-controller --role-name AmazonEKSLoadBalancerControllerRole --attach-policy-arn=arn:aws:iam::acc_no:policy/AWSLoadBalancerControllerIAMPolicy --approve
+
+helm repo add eks https://aws.github.io/eks-charts
+helm repo update eks
+
+helm install aws-load-balancer-controller eks/aws-load-balancer-controller -n kube-system --set clusterName=demo-eks --set serviceAccount.create=false --set serviceAccount.name=aws-load-balancer-controller --set region=us-east-1 --set vpcId=vpc-083931e1eb089f3dc
+
+aws iam create-policy-version --policy-arn arn:aws:iam::654654228947:policy/AWSLoadBalancerControllerIAMPolicy --policy-document file://iam_policy.json --set-as-default
+
+aws iam attach-role-policy --policy-arn arn:aws:iam::654654228947:policy/AWSLoadBalancerControllerIAMPolicy --role-name AmazonEKSLoadBalancerControllerRole
+
+
+eksctl delete cluster --name demo-eks --region us-east-1
+
+-------------------------------------------------------------------------------
