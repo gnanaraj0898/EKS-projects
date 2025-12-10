@@ -1,0 +1,111 @@
+
+# =========================
+# Terraform - Core
+# =========================
+
+# Local Terraform directories (providers cache, modules, plugins, etc.)
+.terraform/
+.terraform/*
+
+# Terraform state files (contain sensitive data)
+*.tfstate
+*.tfstate.*
+
+# Crash logs (debug only)
+crash.log
+crash.*.log
+
+# Plans (binary/opaque; regenerate in CI)
+*.tfplan
+plan.out
+
+# Override files (local-only)
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Variable files (often contain secrets)
+*.tfvars
+*.tfvars.json
+*.auto.tfvars
+*.auto.tfvars.json
+
+# Allow non-sensitive examples to be tracked if needed
+!*.example.tfvars
+!*.example.tfvars.json
+!terraform.tfvars.example
+
+# Backend config templates (commit only sanitized templates if required)
+backend.hcl
+backend.tfvars
+
+# Optional: local CLI config (machine-specific)
+.terraformrc
+terraform.rc
+
+
+# =========================
+# Terragrunt (if used)
+# =========================
+.terragrunt-cache/
+*.hcl.backup
+
+
+# =========================
+# Common tool outputs (optional)
+# =========================
+
+# Security scanners / linters reports (generated in CI)
+tfsec.log
+tfsec.json
+checkov_report.*
+trivy.*
+sca-report.*
+
+# Policy-as-code (OPA/Conftest outputs)
+conftest.out
+policy-results.*
+
+# Docs gen / Diagrams
+terraform-docs.*
+diagram.png
+diagram.svg
+
+# Local test harnesses & temp
+tmp/
+temp/
+.local/
+.env
+.env.*
+*.local
+*.tmp
+*.exe 
+
+
+# =========================
+# IDEs / OS-specific
+# =========================
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# IntelliJ / JetBrains
+.idea/
+*.iml
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# Node / Python dev helpers (if present in repo tooling)
+node_modules/
+venv/
+.envrc
+
+# Logs
+*.log
+logs/
