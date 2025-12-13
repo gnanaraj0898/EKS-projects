@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-2048-v2
+  namespace: demo
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      why: demo
+  template:
+    metadata:
+      labels:
+        why: demo
+    spec:
+      containers:
+      - name: app-2048
+        image: public.ecr.aws/l6m2t8p7/docker-2048:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
