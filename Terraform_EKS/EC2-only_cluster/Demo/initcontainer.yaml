@@ -16,8 +16,8 @@ spec:
   - name: init-myservice
     image: busybox:1.28
     command: ['sh', '-c'] #command to run
-    args: ['until nslookup myservice.default.svc.cluster.local; do echo waiting for myservice; sleep 2; done']
-  - name: init-mydb
-    image: busybox:1.28
-    command: ['sh', '-c']
-    args: ['until nslookup mydb.default.svc.cluster.local; do echo waiting for mydb; sleep 2; done']
+    args: ['until nslookup myservice.demo.svc.cluster.local; do echo waiting for myservice; sleep 2; done']
+  # - name: init-mydb
+  #   image: busybox:1.28
+  #   command: ['sh', '-c']
+  #   args: ['until nslookup mydb.default.svc.cluster.local; do echo waiting for mydb; sleep 2; done']
