@@ -1,0 +1,70 @@
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: my-app-hpa
+  namespace: prod
+  labels:
+    app.kubernetes.io/name: my-app
+    app.kubernetes.io/part-of: my-app-suite
+spec:
+  # Always keep a safe floor to handle AZ disruptions and rolling updates
+  minReplicas: 3
+
+  # Cap to avoid runaway scaling / unexpected wallet burn
+  maxReplicas: 50
+
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: my-app
+
+  # Scale on multiple metrics; the HPA will pick the highest recommended replica count.
+  metrics:
+    # CPU-based scaling (requires requests.cpu set on pods)
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          # Target average CPU utilization across pods (in % of requests)
+          averageUtilization: 70
+
+    # Memory-based scaling (requires requests.memory set on pods)
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          # Memory is bursty; keep this slightly higher to reduce thrash
+          averageUtilization: 75
+
+  # Fine-grained control over scaling speed and stability
+  behavior:
+    # Allow fast scale up (bursty traffic), but cap burst size to keep node churn sane
+    scaleUp:
+      stabilizationWindowSeconds: 30   # don’t wait long to grow
+      selectPolicy: Max                # choose the most aggressive of the policies
+      policies:
+        # At most double the replicas per minute
+        - type: Percent
+          value: 100
+          periodSeconds: 60
+        # Or add at most 4 pods per minute (whichever is larger due to selectPolicy=Max)
+        - type: Pods
+          value: 4
+          periodSeconds: 60
+
+    # Be conservative when scaling down to avoid oscillations & cold-start penalties
+    scaleDown:
+      stabilizationWindowSeconds: 300  # 5 minutes of stable signals before shrinking
+      selectPolicy: Max
+      policies:
+        # Remove at most 50% of replicas per minute
+        - type: Percent
+          value: 50
+          periodSeconds: 60
+        # Or remove at most 2 pods per minute
+        - type: Pods
+          value: 2
+          periodSeconds: 60
