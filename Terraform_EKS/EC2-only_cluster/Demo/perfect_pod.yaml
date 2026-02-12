@@ -1,0 +1,145 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    cni.projectcalico.org/containerID: c15b4fc7cf14a2c0d820ce6c5fa498346b1c2d53cb3c5f9c80a86710ebfd2ad3
+    cni.projectcalico.org/podIP: 192.168.1.4/32
+    cni.projectcalico.org/podIPs: 192.168.1.4/32
+  creationTimestamp: "2026-02-12T07:57:16Z"
+  generateName: intentional-crash-demo-f7944d898-
+  generation: 1
+  labels:
+    app: crasher
+    pod-template-hash: f7944d898
+  name: intentional-crash-demo-f7944d898-s96jv
+  namespace: default
+  ownerReferences:
+  - apiVersion: apps/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: ReplicaSet
+    name: intentional-crash-demo-f7944d898
+    uid: 9e30dec2-b7ba-40e9-85f3-c2af37d81c56
+  resourceVersion: "5392"
+  uid: 0a8907e3-0e1f-4382-b24a-5828bb57e9f7
+spec:
+  containers:
+  - command:
+    - /bin/sh
+    - -c
+    - echo 'I am about to crash!'; exit 1
+    image: alpine:latest
+    imagePullPolicy: Always
+    name: alpine-container
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-mnx8d
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: node01
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - name: kube-api-access-mnx8d
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2026-02-12T07:57:19Z"
+    observedGeneration: 1
+    status: "True"
+    type: PodReadyToStartContainers
+  - lastProbeTime: null
+    lastTransitionTime: "2026-02-12T07:57:16Z"
+    observedGeneration: 1
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2026-02-12T07:57:16Z"
+    message: 'containers with unready status: [alpine-container]'
+    observedGeneration: 1
+    reason: ContainersNotReady
+    status: "False"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2026-02-12T07:57:16Z"
+    message: 'containers with unready status: [alpine-container]'
+    observedGeneration: 1
+    reason: ContainersNotReady
+    status: "False"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2026-02-12T07:57:16Z"
+    observedGeneration: 1
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: containerd://2815a19deaf568707194c714175d271fe40cd173c3533a3ca805584ea2134659
+    image: docker.io/library/alpine:latest
+    imageID: docker.io/library/alpine@sha256:25109184c71bdad752c8312a8623239686a9a2071e8825f20acb8f2198c3f659
+    lastState:
+      terminated:
+        containerID: containerd://2815a19deaf568707194c714175d271fe40cd173c3533a3ca805584ea2134659
+        exitCode: 1
+        finishedAt: "2026-02-12T08:13:05Z"
+        reason: Error
+        startedAt: "2026-02-12T08:13:05Z"
+    name: alpine-container
+    ready: false
+    resources: {}
+    restartCount: 8
+    started: false
+    state:
+      waiting:
+        message: back-off 5m0s restarting failed container=alpine-container pod=intentional-crash-demo-f7944d898-s96jv_default(0a8907e3-0e1f-4382-b24a-5828bb57e9f7)
+        reason: CrashLoopBackOff
+    volumeMounts:
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-mnx8d
+      readOnly: true
+      recursiveReadOnly: Disabled
+  hostIP: 172.30.2.2
+  hostIPs:
+  - ip: 172.30.2.2
+  observedGeneration: 1
+  phase: Running
+  podIP: 192.168.1.4
+  podIPs:
+  - ip: 192.168.1.4
+  qosClass: BestEffort
+  startTime: "2026-02-12T07:57:16Z"
